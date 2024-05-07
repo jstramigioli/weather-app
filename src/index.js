@@ -1,28 +1,24 @@
 import './style.css'
+import { getTomorrowWeatherInfo,
+        getSearchMatches } from './weather-api-fetch'
+import { loadInfo, createPredictSearch, clearPredictSearch } from './load-weatherapi-to-dom'
 
-async function getTomorrowWeatherInfo(city) {
-    const url = 'https://api.weatherapi.com/v1/forecast.json?'
-    const apiKey = '0ab19ad4300c4d0895923218240305'
-    const fetchData = await fetch(url+'key='+apiKey+'&q='+city+'&days=2')
-    const jsonFetchData = await fetchData.json()
-    const weatherInfo = await function() {
-        const location = jsonFetchData.location
-        const weatherTomorrow = jsonFetchData.forecast.forecastday[1]
-        return {
-            city: location.name,
-            region: location.region,
-            country: location.country,
-            conditionText: weatherTomorrow.day.condition.text,
-            conditionIconUrl: weatherTomorrow.day.condition.text,
-            minTempC: weatherTomorrow.day.mintemp_c,
-            minTempF: weatherTomorrow.day.mintemp_f,
-            maxTempC: weatherTomorrow.day.maxtemp_c,
-            maxTempF: weatherTomorrow.day.maxtemp_f,
-            chanceOfRain: weatherTomorrow.day.daily_chance_of_rain,
-            chanceOfSnow: weatherTomorrow.day.daily_chance_of_snow,
-        }
-    }
-    return weatherInfo()  
+const search = () => {
+    clearPredictSearch()
+    getTomorrowWeatherInfo(searchInput.value).then(info => loadInfo(info))
 }
 
-getTomorrowWeatherInfo('villa gesell').then(info => console.log(info))
+const searchInput = document.querySelector('#search-bar')
+searchInput.addEventListener('input', () => {
+    getSearchMatches(searchInput.value).then(info => createPredictSearch(info))
+})
+searchInput.addEventListener('keypress', (event) => {
+    if (event.key === "Enter") {
+        search()
+    }
+})
+
+const searchBtn = document.querySelector('#search-btn')
+searchBtn.addEventListener('click', search)
+
+getTomorrowWeatherInfo('villa gesell').then(info => loadInfo(info))
