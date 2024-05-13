@@ -6,12 +6,13 @@ async function getTomorrowWeatherInfo(city) {
     const weatherInfo = await function() {
         const location = jsonFetchData.location
         const weatherTomorrow = jsonFetchData.forecast.forecastday[1]
+        console.log(jsonFetchData)
         return {
             city: location.name,
             region: location.region,
             country: location.country,
             conditionText: weatherTomorrow.day.condition.text,
-            conditionIconUrl: weatherTomorrow.day.condition.text,
+            conditionIconUrl: weatherTomorrow.day.condition.icon,
             minTempC: weatherTomorrow.day.mintemp_c,
             minTempF: weatherTomorrow.day.mintemp_f,
             maxTempC: weatherTomorrow.day.maxtemp_c,
@@ -20,6 +21,7 @@ async function getTomorrowWeatherInfo(city) {
             chanceOfSnow: weatherTomorrow.day.daily_chance_of_snow,
         }
     }
+    
     return weatherInfo()  
 }
 

@@ -1,3 +1,9 @@
+import { getTomorrowWeatherInfo,
+    getSearchMatches } from './weather-api-fetch'
+
+let temperatureUnits = 'C'
+let currentInfo
+
 function loadLocationInfo(info) {
     const cityDom = document.querySelector('#city')
     const regionAndCountryDom = document.querySelector('#region-country')
@@ -24,10 +30,19 @@ function loadWeatherInfo(info) {
 
     const condText = info.conditionText
     const condIconUrl = info.conditionIconUrl
-    const minTemp = info.minTempC
-    const maxTemp = info.maxTempC
-    const chanceOfRain = info.chanceOfRain
-    const chanceOfSnow = info.chanceOfSnow
+    let minTemp
+    let maxTemp
+    if (temperatureUnits == 'F') {
+        minTemp = info.minTempF + '°F'
+        maxTemp = info.maxTempF + '°F'
+    }
+    else {
+        minTemp = info.minTempC + '°C'
+        maxTemp = info.maxTempC + '°C'
+    }
+    
+    const chanceOfRain = info.chanceOfRain + '%'
+    const chanceOfSnow = info.chanceOfSnow + '%'
 
     loadWeatherInfoElement(condText, condTextDom)
     loadWeatherInfoElement(minTemp, minTempDom)
@@ -40,6 +55,12 @@ function loadWeatherInfo(info) {
 function loadInfo(info) {
     loadLocationInfo(info)
     loadWeatherInfo(info)
+    setDisplayFromCondition(info.conditionText)
+    storeCurrentInfo(info)
+}
+
+function storeCurrentInfo(info) {
+    currentInfo = info
 }
 
 function createPredictSearch(listOfMatches) {
@@ -59,6 +80,10 @@ function createPredictSearch(listOfMatches) {
         regionAndCountry.textContent = element.region + ', ' + element.country
         predictResult.appendChild(regionAndCountry)
         list.appendChild(predictResult)
+// Using 'mousedown' instead of 'click' because this way the event fires BEFORE the blur event
+        predictResult.addEventListener('mousedown', () => {
+            search(element.url)
+        })
     });
 }
 
@@ -68,5 +93,78 @@ function clearPredictSearch() {
     const list = document.querySelector('#search-results')
     list.innerHTML = ''
 }
+
+function setDisplayFromCondition(condition) {
+    let cond = ''
+    
+    switch (true) {
+        case condition.toLowerCase().includes('snow'):
+            cond = 'snowy';
+            break;
+        case condition.toLowerCase().includes('rain'):
+            cond = 'rainy';
+            break;
+        case condition.toLowerCase().includes('thunder') || condition.toLowerCase().includes('storm'):
+            cond = 'stormy';
+            break;
+        case condition.toLowerCase().includes('cloud'):
+            cond = 'cloudy';
+            break;
+        case condition.toLowerCase().includes('sun'):
+            cond = 'sunny';
+            break;
+        default:
+            cond = 'default'
+    }
+
+    const background = document.querySelector('#content')
+    background.classList = cond
+}
+
+const search = (inputToSearch) => {
+    console.log(inputToSearch)
+    getTomorrowWeatherInfo(inputToSearch).then(info => loadInfo(info))
+    clearPredictSearch()
+}
+
+const searchInput = document.querySelector('#search-bar')
+searchInput.addEventListener('input', () => {
+    getSearchMatches(searchInput.value).then(info => createPredictSearch(info))
+})
+searchInput.addEventListener('keypress', (event) => {
+    if (event.key === "Enter") {
+        search(searchInput.value)
+    }
+})
+
+searchInput.addEventListener('blur', clearPredictSearch)
+
+const searchBtn = document.querySelector('#search-btn')
+// Using 'mousedown' instead of 'click' because this way the event fires BEFORE the blur event
+searchBtn.addEventListener('mousedown', () => {
+    search(searchInput.value)} )
+
+getTomorrowWeatherInfo('villa gesell').then(info => loadInfo(info))
+
+function setTemperatureUnits(unit) {
+    if (unit === 'C' || unit === 'F') {
+        temperatureUnits = unit
+    }
+    else console.log('error: invalid units')
+}
+
+function changeTemperatureUnits() {
+    if (temperatureUnits == 'C') {
+        setTemperatureUnits('F')
+    }
+    else {
+        setTemperatureUnits('C')
+    }
+
+    loadInfo(currentInfo)
+}
+
+const changeUnitBtn = document.querySelector('#toggle-units')
+changeUnitBtn.addEventListener('click', changeTemperatureUnits)
 
 export {loadInfo, createPredictSearch, clearPredictSearch}

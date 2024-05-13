@@ -52,3 +52,93 @@ img {
 *, *:before, *:after {
     box-sizing: inherit;
   }
+
+:root {
+	--sunny-gradient: linear-gradient(rgb(243, 169, 9), rgb(236, 0, 0));
+	--cloudy-gradient: linear-gradient( rgb(92, 92, 94), rgb(35, 60, 141));
+	--storm-gradient: linear-gradient( rgb(76, 10, 85), rgb(240, 236, 5));
+	--rainy-gradient: linear-gradient( rgb(76, 10, 85), rgb(84, 177, 231));
+	--snowy-gradient: linear-gradient( rgb(255, 255, 255), rgb(34, 52, 151));
+	--default-gradient: linear-gradient( rgb(230, 149, 0), rgb(3, 158, 11));
+ }
+
+
+  #content {
+	box-sizing: border-box;
+	padding: 0 max(15%, 10px);
+	height: 100vh;
+	background: var(--default-gradient);
+	color: white;
+  }
+
+  #content.rainy {
+	background: var(--rainy-gradient);
+  }
+
+  #content.snowy {
+	background: var(--snowy-gradient);
+  }
+
+  #content.stormy {
+	background: var(--storm-gradient);
+  }
+
+  #content.cloudy {
+	background: var(--cloudy-gradient);
+  }
+
+  #content.sunny {
+	background: var(--sunny-gradient);
+  }
+
+
+  #search-bar-container {
+	display: flex;
+	position: relative;
+  }
+
+  #search-results {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	cursor: pointer;
+  }
+
+  .predict-result {
+	color: black;
+	background-color: rgba(224, 241, 241, 0.8);
+	width: 100%;
+	min-height: 3rem;
+  }
+
+  .predict-result:hover {
+	background-color: rgba(133, 130, 127, 0.8);
+  }
+
+  #search-bar {
+	flex-grow: 1;
+	height: 2rem;
+  }
+
+  #location h1 {
+	font-size: 7rem;
+  }
+
+  #location h3 {
+	font-size: 3rem;
+  }
+
+  #weather-info-container {
+	display: flex;
+	justify-content: space-between;
+  }
+
+  .condition-icon {
+	width: 400px;
+	height: 400px;
+  }
+
+  #weather-stats {
+	display: grid;
+  }
